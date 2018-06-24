@@ -85,7 +85,7 @@ class Day_Widget(QWidget):
         pixmap.loadFromData(data)
         lbl_icon.setPixmap(pixmap)
 
-        btn_more = QPushButton(self, text="More info")
+        btn_more = QPushButton(self, text="Więcej info")
         btn_more.setFont(NORMAL_LIGHT_FONT)
         btn_more.clicked.connect(self.on_click_button)
       
@@ -117,6 +117,7 @@ class Ten_Days_Plot_Widget(QWidget):
         axis_rain = figure.add_subplot(111)
         axis_rain.set(ylabel='opady[mm]',title='Pogoda na 10 dni')
         axis_rain.xaxis.set_major_locator(plt.MultipleLocator(1))
+        axis_rain.set_ylim(0, 20)
         
         axis_temp = axis_rain.twinx()
         axis_temp.set(ylabel='temperatura [C]')
@@ -132,7 +133,6 @@ class Ten_Days_Plot_Widget(QWidget):
         axis_temp.plot(x, y_min, 'bo-')
 
         axis_temp.set_ylim(axis_temp.get_ylim()[0]-5, axis_temp.get_ylim()[1]+5)
-        
         
         for i in range(0,10):
             axis_temp.annotate(y_max[i], (x[i], y_max[i]+1))
@@ -188,20 +188,14 @@ class Hourly_Plot_Widget(QWidget):
         x = self.create_x_dataset()
         y_temp = self.create_temp_dataset()
         y_rain = self.create_rain_dataset()
-        print(x)
-        print(y_temp)
-        print(y_rain)
 
         axis_rain.bar(x, y_rain, color='#B3FFFF')
         axis_temp.plot(x, y_temp, 'ro-')
-        
-        
+    
         axis_temp.set_ylim(axis_temp.get_ylim()[0]-2, axis_temp.get_ylim()[1]+2)
-        
         
         for i in range(0,len(x)):
             axis_temp.annotate(y_temp[i], (x[i], y_temp[i]+1))
-            #axis_temp.annotate(y_min[i], (x[i], y_min[i]+1))
 
         self.layoutVertical = QVBoxLayout(self)
         self.layoutVertical.addWidget(canvas)
