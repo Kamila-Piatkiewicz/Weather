@@ -126,9 +126,9 @@ class Weather_App(QWidget):
 
         grid = QGridLayout()
 
-        for i in range (10):
+        for i in range (0,10):
             day = Day_Widget(self.weather_data, i)
-            grid.addWidget(day, i < 5, i % 5)
+            grid.addWidget(day, i >= 5, i % 5)
 
         plot = Hourly_Plot_Widget(self.weather_data)   
         grid.addWidget(plot, 2, 0, 2, 5)
