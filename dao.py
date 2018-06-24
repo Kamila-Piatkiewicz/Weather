@@ -52,6 +52,9 @@ class Weather_DAO:
     def get_date(self, in_days):
         day = datetime.now() + timedelta(days=in_days)
         return '{:02}.{:02}'.format(day.day, day.month)
+
+    def get_hour_now(self):
+        return datetime.now().hour
    
     def get_min_temperature(self, in_days):
         return int(self.json_10days_weather['forecast']['simpleforecast']['forecastday'][in_days]['low']['celsius'])
@@ -61,7 +64,61 @@ class Weather_DAO:
 
     def get_rain(self, in_days):
         return int(self.json_10days_weather['forecast']['simpleforecast']['forecastday'][in_days]['qpf_allday']['mm'])
+
+    def get_snow(self, in_days):
+        return int(self.json_10days_weather['forecast']['simpleforecast']['forecastday'][in_days]['snow_allday']['cm'])
+
+    def get_average_wind(self, in_days):
+        return int(self.json_10days_weather['forecast']['simpleforecast']['forecastday'][in_days]['avewind']['kph'])
+
+    def get_max_wind(self, in_days):
+        return int(self.json_10days_weather['forecast']['simpleforecast']['forecastday'][in_days]['maxwind']['kph'])
+
+    def get_humidity(self, in_days):
+        return int(self.json_10days_weather['forecast']['simpleforecast']['forecastday'][in_days]['avehumidity'])
    
     def get_icon_url(self, in_days):
         return self.json_10days_weather['forecast']['simpleforecast']['forecastday'][in_days]['icon_url']
+
+    def get_today_next_hours(self):
+        hour = self.get_hour_now()
+        hours = []
+        for i in range(hour+1, 24):
+            hours.append('{:02}:00'.format(i))
+        return hours
+
+    def get_today_hourly_temperature(self):
+        hour = self.get_hour_now()
+        dataset = []
+        for i in range(len(self.get_today_next_hours())):
+            dataset.append(int(self.json_hourly_weather['hourly_forecast'][i]['temp']['metric']))
+        return dataset
+
+    def get_today_hourly_rain(self):
+        hour = self.get_hour_now()
+        dataset = []
+        for i in range(len(self.get_today_next_hours())):
+            dataset.append(int(self.json_hourly_weather['hourly_forecast'][i]['qpf']['metric']))
+        return dataset
+
+    def get_tomorrow_next_hours(self):
+        hours = []
+        for i in range(0,24):
+            #hours.append('{}:00'.format(i))
+            hours.append(i)
+        return hours
+
+    def get_tomorrow_hourly_temperature(self):
+        hour = self.get_hour_now()
+        dataset = []
+        for i in range(0,24):
+            dataset.append(int(self.json_hourly_weather['hourly_forecast'][23-hour+i]['temp']['metric']))
+        return dataset
+
+    def get_tomorrow_hourly_rain(self):
+        hour = self.get_hour_now()
+        dataset = []
+        for i in range(0,24):
+            dataset.append(int(self.json_hourly_weather['hourly_forecast'][23-hour+i]['qpf']['metric']))
+        return dataset
        
