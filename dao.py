@@ -58,6 +58,9 @@ class Weather_DAO:
    
     def get_max_temperature(self, in_days):
         return int(self.json_10days_weather['forecast']['simpleforecast']['forecastday'][in_days]['high']['celsius'])
+
+    def get_rain(self, in_days):
+        return int(self.json_10days_weather['forecast']['simpleforecast']['forecastday'][in_days]['qpf_allday']['mm'])
    
     def get_icon_url(self, in_days):
         return self.json_10days_weather['forecast']['simpleforecast']['forecastday'][in_days]['icon_url']

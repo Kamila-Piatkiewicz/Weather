@@ -59,25 +59,35 @@ class Hourly_Plot_Widget(QWidget):
         super(Hourly_Plot_Widget, self).__init__(parent)
         self.weather_data = weather_data
 
-        self.figure = Figure()
-        self.canvas = FigureCanvasQTAgg(self.figure)
+        figure = Figure()
+        canvas = FigureCanvasQTAgg(figure)
+
+        axis_rain = figure.add_subplot(111)
+        axis_rain.set(ylabel='opady[mm]',title='Pogoda na 10 dni')
+        axis_rain.xaxis.set_major_locator(plt.MultipleLocator(1))
         
-        self.axis = self.figure.add_subplot(111)
-        self.axis.set(ylabel='temperatura',title='Pogoda godzinowa')
-        self.axis.xaxis.set_major_locator(plt.MultipleLocator(1))
-        self.axis.yaxis.set_major_locator(plt.MultipleLocator(5))
+        axis_temp = axis_rain.twinx()
+        axis_temp.set(ylabel='temperatura [C]')
+        axis_temp.yaxis.set_major_locator(plt.MultipleLocator(5))
+        
         x = self.create_x_dataset()
         y_max = self.create_max_temp_dataset()
         y_min = self.create_min_temp_dataset()
-        self.axis.plot(x, y_max,'ro-')
-        self.axis.plot(x, y_min,'bo-')
-        #self.axis.set_yticklabels(self.create_max_temp_dataset)
+        y_rain = self.create_rain_dataset()
+
+        axis_rain.bar(x, y_rain, color='#B3FFFF')
+        axis_temp.plot(x, y_max, 'ro-')
+        axis_temp.plot(x, y_min, 'bo-')
+
+        axis_temp.set_ylim(axis_temp.get_ylim()[0]-5, axis_temp.get_ylim()[1]+5)
+        
+        
         for i in range(0,10):
-            self.axis.annotate(y_max[i], (x[i], y_max[i]+1))
-            self.axis.annotate(y_min[i], (x[i], y_min[i]+1))
+            axis_temp.annotate(y_max[i], (x[i], y_max[i]+1))
+            axis_temp.annotate(y_min[i], (x[i], y_min[i]+1))
 
         self.layoutVertical = QVBoxLayout(self)
-        self.layoutVertical.addWidget(self.canvas)
+        self.layoutVertical.addWidget(canvas)
 
     def create_x_dataset(self):
         x_dataset = []
@@ -95,6 +105,12 @@ class Hourly_Plot_Widget(QWidget):
         y_dataset = []
         for i in range (0, 10):
             y_dataset.append(self.weather_data.get_min_temperature(i))
+        return y_dataset
+
+    def create_rain_dataset(self):
+        y_dataset = []
+        for i in range (0, 10):
+            y_dataset.append(self.weather_data.get_rain(i))
         return y_dataset
       
 class Weather_App(QWidget):
